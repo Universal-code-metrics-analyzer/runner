@@ -9,8 +9,14 @@ class GitProcessorConfig(BaseModel):
     config: Any = Field(default={})
 
 
+class MetricsCalculatorConfig(BaseModel):
+    plugin: str
+    config: Any = Field(default={})
+
+
 class Config(BaseModel):
     git_processor: GitProcessorConfig
+    metrics_calculator: MetricsCalculatorConfig
 
 
 def read_config() -> Config:
