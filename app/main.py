@@ -1,24 +1,33 @@
 import asyncio
 
 from app.config import config
-from app.plugins import plugin_manager
+from app.plugins import PluginType, plugin_manager
+
+COMMIT_SHA = 'a89dee02c6fc2fa16bb7e8f8e77fa874a7090632'
 
 
 async def main():
-    git_processor_class = plugin_manager.get_git_processor_class(config.git_processor.plugin)
-    metrics_calculator_class = plugin_manager.get_metrics_calculator_class(
-        config.metrics_calculator.plugin
+    git_processor_class = plugin_manager.get_class_from_plugin(
+        PluginType.GIT_PROCESSOR, config.git_processor.plugin
+    )
+    metrics_calculator_class = plugin_manager.get_class_from_plugin(
+        PluginType.METRICS_CALCULATOR, config.metrics_calculator.plugin
+    )
+    report_generator_class = plugin_manager.get_class_from_plugin(
+        PluginType.REPORT_GENERATOR, config.report_generator.plugin
     )
 
-    git_processor = git_processor_class(
-        config.git_processor.config, commit_sha='1c81a619be55cb2855507eeb2e633e63997ce3e5'
-    )
+    tree_data = await git_processor_class(
+        config.git_processor.config, commit_sha=COMMIT_SHA
+    ).process()
 
-    tree_data = await git_processor.process()
     tree_metrics = await metrics_calculator_class(
         config.metrics_calculator.config, tree_data
     ).calculate()
-    print(tree_metrics)
+
+    await report_generator_class(
+        config.report_generator.config, tree_metrics=tree_metrics, commit_sha=COMMIT_SHA
+    ).generate()
 
 
 if __name__ == '__main__':

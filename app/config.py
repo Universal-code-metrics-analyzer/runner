@@ -14,9 +14,15 @@ class MetricsCalculatorConfig(BaseModel):
     config: Any = Field(default={})
 
 
+class ReportGeneratorConfig(BaseModel):
+    plugin: str
+    config: Any = Field(default={})
+
+
 class Config(BaseModel):
     git_processor: GitProcessorConfig
     metrics_calculator: MetricsCalculatorConfig
+    report_generator: ReportGeneratorConfig
 
 
 def read_config() -> Config:
