@@ -1,4 +1,4 @@
 set dotenv-load
 
-dev:
-    PYTHONPATH=:./app python app/main.py
+dev *ARGS:
+    PYTHONPATH=:./app python app/main.py {{ARGS}}
