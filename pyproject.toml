@@ -10,7 +10,7 @@ python = "^3.12"
 pydantic = "^2.7.0"
 pyyaml = "^6.0.1"
 attrs = "^23.2.0"
-core = {git = "https://github.com/Universal-code-metrics-analyzer/core.git", rev = "dev"}
+core = {git = "https://github.com/Universal-code-metrics-analyzer/core.git", rev = "v0.1.0"}
 
 
 [build-system]

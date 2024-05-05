@@ -17,16 +17,14 @@ async def main():
         PluginType.REPORT_GENERATOR, config.report_generator.plugin
     )
 
-    tree_data = await git_processor_class(
-        config.git_processor.config, commit_sha=COMMIT_SHA
-    ).process()
+    tree_data = await git_processor_class(config.git_processor.config, ref=COMMIT_SHA).process()
 
     tree_metrics = await metrics_calculator_class(
         config.metrics_calculator.config, tree_data
     ).calculate()
 
     await report_generator_class(
-        config.report_generator.config, tree_metrics=tree_metrics, commit_sha=COMMIT_SHA
+        config.report_generator.config, tree_metrics=tree_metrics, ref=COMMIT_SHA
     ).generate()
 
 
