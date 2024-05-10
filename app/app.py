@@ -1,6 +1,7 @@
 import asyncio
+from typing import Annotated
 
-from typer import Typer
+from typer import Argument, Option, Typer
 
 from app.config import config
 from app.plugins import (
@@ -58,9 +59,13 @@ async def process_refs(commit_refs: list[str], dry_run: bool) -> None:
 
 
 @cli.command()
-def run(commit_refs: list[str], dry_run: bool = False):
+def run(
+    commit_refs: Annotated[
+        list[str],
+        Argument(
+            help='List of one of: HEAD, tag, branch name, remote branch name, hash, short hash'
+        ),
+    ],
+    dry_run: Annotated[bool, Option(help='Validate plugin configuration')] = False,
+):
     asyncio.run(process_refs(commit_refs, dry_run))
-
-
-if __name__ == '__main__':
-    cli()
