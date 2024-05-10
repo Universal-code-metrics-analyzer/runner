@@ -11,6 +11,10 @@ from core.metrics_calculator import (
 )
 from core.report_generator import ReportGenerator, ReportGenratorConfigShape
 
+GitProcessorT = GitProcessor[GitProcessorConfigShape, Any, Any]
+MetricsCalculatorT = MetricsCalculator[MetricsCalculatorConfigShape]
+ReportGeneratorT = ReportGenerator[ReportGenratorConfigShape]
+
 
 class PluginType(str, Enum):
     GIT_PROCESSOR = 'git_processor'
@@ -32,17 +36,17 @@ class Plugin[T]:
 
 
 @define(frozen=True, kw_only=True)
-class GitProcessorPlugin(Plugin[GitProcessor[GitProcessorConfigShape, Any, Any]]):
+class GitProcessorPlugin(Plugin[GitProcessorT]):
     type: Literal[PluginType.GIT_PROCESSOR] = PluginType.GIT_PROCESSOR
 
 
 @define(frozen=True, kw_only=True)
-class MetricsCalculatorPlugin(Plugin[MetricsCalculator[MetricsCalculatorConfigShape]]):
+class MetricsCalculatorPlugin(Plugin[MetricsCalculatorT]):
     type: Literal[PluginType.METRICS_CALCULATOR] = PluginType.METRICS_CALCULATOR
 
 
 @define(frozen=True, kw_only=True)
-class ReportGeneratorPlugin(Plugin[ReportGenerator[ReportGenratorConfigShape]]):
+class ReportGeneratorPlugin(Plugin[ReportGeneratorT]):
     type: Literal[PluginType.REPORT_GENERATOR] = PluginType.REPORT_GENERATOR
 
 
