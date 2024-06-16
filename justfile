@@ -1,4 +1,4 @@
 set dotenv-load
 
-dev *ARGS:
-    python main.py {{ARGS}}
+run *ARGS:
+    PYTHONPATH=:./runner python runner/__main__.py {{ARGS}}
