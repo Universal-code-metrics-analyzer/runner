@@ -3,8 +3,8 @@ from typing import Annotated
 
 from typer import Argument, Option, Typer
 
-from app.config import config
-from app.plugins import (
+from runner.config import config
+from runner.plugins import (
     GitProcessorT,
     MetricsCalculatorT,
     PluginType,
