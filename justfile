@@ -1,4 +1,4 @@
 set dotenv-load
 
-dev *ARGS:
+run *ARGS:
     python main.py {{ARGS}}

@@ -32,21 +32,28 @@ def get_plugins_classses() -> (
 
 
 async def process_ref(
-    ref: str,
+    sha: str,
     git_processor_class: type[GitProcessorT],
     metrics_calculator_class: type[MetricsCalculatorT],
     report_generator_class: type[ReportGeneratorT],
 ) -> None:
+    try:
+        git_processor = git_processor_class(config.git_processor.config, sha=sha)
+        commit_meta = await git_processor.get_commit_meta()
+        tree_data = await git_processor.process()
 
-    tree_data = await git_processor_class(config.git_processor.config, ref=ref).process()
+        tree_metrics = await metrics_calculator_class(
+            config.metrics_calculator.config, tree_data
+        ).calculate()
 
-    tree_metrics = await metrics_calculator_class(
-        config.metrics_calculator.config, tree_data
-    ).calculate()
-
-    await report_generator_class(
-        config.report_generator.config, tree_metrics=tree_metrics, ref=ref
-    ).generate()
+        await report_generator_class(
+            config.report_generator.config,
+            sha=sha,
+            commit_meta=commit_meta,
+            tree_metrics=tree_metrics,
+        ).generate()
+    except Exception as ex:
+        print(f'Sha {sha} failed:\n{ex}')
 
 
 async def process_refs(commit_refs: list[str], dry_run: bool) -> None:
@@ -55,7 +62,7 @@ async def process_refs(commit_refs: list[str], dry_run: bool) -> None:
         return
 
     tasks = [asyncio.ensure_future(process_ref(ref, *plugin_classess)) for ref in commit_refs]
-    await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks, return_exceptions=True)
 
 
 @cli.command()
